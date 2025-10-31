@@ -1,27 +1,13 @@
-import json
 
+import data_fetcher as data
 ANIMAL_FILE_PATH = "animals_data.json"
 INPUT_HTML_FILE = "animals_template.html"
 OUTPUT_HTML_FILE = "animals.html"
 KEYWORD_PLACEHOLDER = "__REPLACE_ANIMALS_INFO__"
 
 
-def load_data(file_path):
-    """ Loads a JSON file """
-    try:
-        with open(file_path, "r", encoding="utf-8") as handle:
-            return json.load(handle)
-    except FileNotFoundError:
-        print(f"Error: File '{file_path}' not found.")
-        return
-    except json.JSONDecodeError:
-        print(f"Error: Failed to decode JSON content in '{file_path}'.")
-        return
 
 
-def get_animal_data():
-    """ Returns the animal data from JSON file """
-    return load_data(ANIMAL_FILE_PATH)
 
 
 def get_filter(animals_data):
@@ -46,7 +32,8 @@ def get_filter(animals_data):
 
 def filter_and_generate_html(animals_data):
     """ Returns the animal data from JSON file """
-
+    if not animals_data:
+        return "<h1>Animal data does not exist</h1>"
     # get filtered skin type from user
     selected_skin_type = get_filter(animals_data)
 
@@ -115,12 +102,11 @@ def replace_keyword_in_html(input_file, keyword, replacement, output_file):
 
 
 def main():
-    # Get data
-    animal_data = get_animal_data()
+    user_input = input("Enter a name of an animal: ")
+    animal_data = data.fetch_data(user_input)
 
+    #Get new html
     formatted_animal_data = filter_and_generate_html(animal_data)
-
-    # Get new html file
     replace_keyword_in_html(INPUT_HTML_FILE, KEYWORD_PLACEHOLDER, formatted_animal_data, OUTPUT_HTML_FILE)
 
 
